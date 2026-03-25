@@ -24,6 +24,17 @@ const ORDERS = [
 export default function App() {
   const [orders, setOrders] = React.useState(ORDERS);
 
+  const total = orders.reduce((sum, order) => sum + order.price * order.quantity, 0);
+
+  function handleQuantityChange(productName, delta) {
+    setOrders(orders.map((order) => {
+      if (order.product === productName) {
+        return { ...order, quantity: order.quantity + delta };
+      }
+      return order;
+    }));
+  }
+
   return (
     <>
       <header>
@@ -31,10 +42,18 @@ export default function App() {
       </header>
 
       <div className="order-list">
-        <OrderCard></OrderCard>
+        {orders.map((order) => (
+          <OrderCard
+            key={order.product}
+            product={order.product}
+            price={order.price}
+            quantity={order.quantity}
+            onQuantityChange={handleQuantityChange}
+          />
+        ))}
       </div>
 
-      <CheckoutButton total="TODO"></CheckoutButton>
+      <CheckoutButton total={total} />
     </>
   );
 }
